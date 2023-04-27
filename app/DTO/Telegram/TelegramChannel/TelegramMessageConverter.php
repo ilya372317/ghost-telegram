@@ -19,7 +19,7 @@ class TelegramMessageConverter implements JsonConverter
         self::validateData($data);
         return new TelegramChannel(
             username: $data['Chat']['username'],
-            inviteLink: $data['full']['exported_invite']['link']
+            inviteLink: trim('https://t.me/'. $data['Chat']['username'])
         );
     }
 
@@ -33,7 +33,7 @@ class TelegramMessageConverter implements JsonConverter
         if (!isset($data['Chat']['username'])) {
             throw new FailedToConvertException("Failed convert channel username");
         }
-        if (!isset($data['full']['exported_invite']['link'])) {
+        if (!isset($data['full']['about'])) {
             throw new FailedToConvertException("Failed convert channel link");
         }
     }

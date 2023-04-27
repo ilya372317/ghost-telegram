@@ -29,8 +29,6 @@ class AuthTelegramCommand extends Command
      */
     public function handle()
     {
-//        $telegram = new API('telegram.session');
-//        $telegram->start();
         $settings = new Settings;
         $settings->getLogger()->setLevel(Logger::LEVEL_ULTRA_VERBOSE);
         TelegramEventHandler::startAndLoop('telegram.session', $settings);

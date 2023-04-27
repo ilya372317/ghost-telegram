@@ -17,7 +17,7 @@ class TelegramEventHandler extends EventHandler
     /**
      * @var int|string Username or ID of bot admin
      */
-    const ADMIN = "ilyaotinov"; // !!! Change this to your username !!!
+    const ADMIN = "theperipherals"; // !!! Change this to your username !!!
 
     /**
      * List of properties automatically stored in database (MySQL, Postgres, redis or memory).
@@ -61,9 +61,7 @@ class TelegramEventHandler extends EventHandler
      */
     public function onStart(): void
     {
-        $this->logger("The bot was started!");
-        $this->logger($this->getFullInfo('ilyaotinov'));
-        $adminId = $this->getFullInfo('ilyaotinov')['User']['id'];
+        $adminId = $this->getFullInfo('theperipherals')['User']['id'];
         $this->adminId = $adminId;
     }
 
@@ -73,22 +71,22 @@ class TelegramEventHandler extends EventHandler
      */
     public function onAny(array $update): void
     {
-        $this->logger("any is work!");
+//        if ($update['_'] == 'updateNewChannelMessage') {
+//            $this->updateNewMessage($update);
+//        }
     }
 
-    public function onUpdateNewMessage(array $message): void
+    private function updateNewMessage(array $message): void
     {
         /** @var GhostClient $clientService */
         $clientService = app(GhostClientService::class);
         try {
-            $this->logger($message);
             $fromUser = TelegramUserConverter::convert($this->getFullInfo($message['message']['from_id']));
             $message = TelegramFromUserMessageConverter::convert($message['message']);
             $clientService->createPostFromTelegramUserMessage($fromUser, $message);
         } catch (FailedToConvertException $e) {
             $this->logger($e->getMessage());
         }
-
     }
 
     public function onUpdateNewChannelMessage(array $update): void

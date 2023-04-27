@@ -6,9 +6,17 @@ use App\DTO\Ghost\Post\GhostPost;
 use App\DTO\Telegram\TelegramChannel\TelegramChannel;
 use App\DTO\Telegram\TelegramMessage\TelegramMessage;
 use App\DTO\Telegram\TelegramUser\TelegramUser;
+use App\Models\Channel;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * Class GhostClientService
+ * @pakege App\Services\Ghost
+ *
+ * @author Otinov Ilya
+ */
 class GhostClientService implements GhostClient
 {
     private const MIN_POST_LENGTH = 1000;
@@ -66,9 +74,20 @@ class GhostClientService implements GhostClient
             return null;
         }
 
+        if (! $this->channelIsValid($channel)) {
+            return null;
+        }
+
         $title = $this->getTitleFromChannelMessage($content);
 
         return new GhostPost($content, $title);
+    }
+
+    private function channelIsValid(TelegramChannel $channel): bool
+    {
+        $myChannels = Channel::all()->pluck('username')->toArray();
+
+        return in_array($channel->username, $myChannels);
     }
 
     private function getTitleFromChannelMessage(string $content): string
@@ -83,6 +102,6 @@ class GhostClientService implements GhostClient
 
     private function addAuthorLinkToContent(string $content, TelegramChannel $channel): string
     {
-        return $content . "\n" . 'Источник: ' . "<a href='$channel->inviteLink'> $channel->username</a>";
+        return $content . "\n\n" . "<b>" . 'Источник: ' . "</b>" . "<a href='$channel->inviteLink'>$channel->username</a>";
     }
 }
