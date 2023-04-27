@@ -4,8 +4,16 @@ namespace App\Providers;
 
 use App\Services\Ghost\GhostClient;
 use App\Services\Ghost\GhostClientService;
+use App\Utils\JWT\JwtParser;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class AppServiceProvider
+ * @pakege App\Providers
+ *
+ * @author Otinov Ilya
+ */
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -22,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->bind(GhostClient::class, GhostClientService::class);
+
+        $jwtToken = JwtParser::parseToken();
+        Http::macro('ghost', function () use ($jwtToken) {
+            return Http::withHeaders(['Authorization' => " Ghost $jwtToken"])
+                ->baseUrl('https://onff.ru/ghost/api/v2/admin');
+        });
     }
 }

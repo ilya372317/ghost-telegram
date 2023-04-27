@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "becklyn/mobiledoc": "*",
         "danog/madelineproto": "^8",
         "firebase/php-jwt": "^6.4",
         "guzzlehttp/guzzle": "^7.2",

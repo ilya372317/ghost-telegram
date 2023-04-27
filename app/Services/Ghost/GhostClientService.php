@@ -2,23 +2,87 @@
 
 namespace App\Services\Ghost;
 
-use App\DTO\PostContent;
-use App\Utils\JWT\JwtParser;
+use App\DTO\Ghost\Post\GhostPost;
+use App\DTO\Telegram\TelegramChannel\TelegramChannel;
+use App\DTO\Telegram\TelegramMessage\TelegramMessage;
+use App\DTO\Telegram\TelegramUser\TelegramUser;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class GhostClientService implements GhostClient
 {
-    private string $jwtToken;
+    private const MIN_POST_LENGTH = 1000;
 
-    public function __construct()
+    private const POST_TITLE_LENGTH = 40;
+
+    public function createNewPost(GhostPost $postContent): void
     {
-        $this->jwtToken = JwtParser::parseToken();
+        /** @var Response $response */
+        Http::ghost()->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
+            'posts' => [
+                [
+                    'title' => mb_convert_encoding($postContent->title, 'UTF-8', 'UTF-8'),
+                    'status' => 'draft',
+                    'authors' => [
+                        [
+                            'email' => 'otinoff@gmail.com',
+                        ]
+                    ],
+                    'html' =>'<p>' .  str_replace("\n", '<br>',$postContent->content) . '</p>',
+                    'tags' => [config('ghost.tag_id')]
+                ]
+            ]
+        ]);
     }
 
-    public function createNewPost(PostContent $postContent): void
+    public function createPostFromTelegramUserMessage(
+        TelegramUser    $telegramUser,
+        TelegramMessage $telegramMessage
+    ): void
     {
-        $response = Http::withHeaders(['Authorization' => " Ghost $this->jwtToken"])
-            ->get('https://onff.ru/ghost/api/v2/admin/posts');
-        dd($response->body());
+        $content = $telegramMessage->text;
+        $title = substr($content, 0, 30) . '...';
+
+        $postContent = new GhostPost(content: $content, title: $title);
+
+        $this->createNewPost($postContent);
+    }
+
+    public function createPostFromTelegramChannelMessage(TelegramChannel $channel, TelegramMessage $message): void
+    {
+        $ghostPost = $this->makeGhostPostFromChannelMessage($channel, $message);
+
+        if (is_null($ghostPost)) {
+            return;
+        }
+
+        $this->createNewPost($ghostPost);
+    }
+
+    private function makeGhostPostFromChannelMessage(TelegramChannel $channel, TelegramMessage $message): ?GhostPost
+    {
+        $content = $this->addAuthorLinkToContent($message->text, $channel);
+        if (! $this->contentIsValid($content)) {
+            return null;
+        }
+
+        $title = $this->getTitleFromChannelMessage($content);
+
+        return new GhostPost($content, $title);
+    }
+
+    private function getTitleFromChannelMessage(string $content): string
+    {
+        return substr($content, 0, self::POST_TITLE_LENGTH) . '...';
+    }
+
+    private function contentIsValid(string $content): bool
+    {
+        return strlen(trim($content)) > self::MIN_POST_LENGTH;
+    }
+
+    private function addAuthorLinkToContent(string $content, TelegramChannel $channel): string
+    {
+        return $content . "\n" . 'Источник: ' . "<a href='$channel->inviteLink'> $channel->username</a>";
     }
 }

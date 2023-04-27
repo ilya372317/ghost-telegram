@@ -15,7 +15,7 @@ class AuthTelegramCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:auth-telegram';
+    protected $signature = 'telegram:up';
 
     /**
      * The console command description.

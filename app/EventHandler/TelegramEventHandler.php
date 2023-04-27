@@ -2,6 +2,13 @@
 
 namespace App\EventHandler;
 
+use App\DTO\Telegram\TelegramChannel\TelegramMessageConverter;
+use App\DTO\Telegram\TelegramMessage\TelegramFromUserMessageConverter;
+use App\DTO\Telegram\TelegramUser\TelegramUser;
+use App\DTO\Telegram\TelegramUser\TelegramUserConverter;
+use App\Exception\FailedToConvertException;
+use App\Services\Ghost\GhostClient;
+use App\Services\Ghost\GhostClientService;
 use danog\MadelineProto\Db\DbArray;
 use danog\MadelineProto\EventHandler;
 
@@ -48,6 +55,7 @@ class TelegramEventHandler extends EventHandler
     {
         return [self::ADMIN];
     }
+
     /**
      * Initialization logic.
      */
@@ -70,14 +78,31 @@ class TelegramEventHandler extends EventHandler
 
     public function onUpdateNewMessage(array $message): void
     {
-        if (isset($message['message']['media'])) {
-            $this->logger($message['message']['media']);
-            $this->downloadToDir($message['message']['media']['photo'], 'storage/app/telegram');
+        /** @var GhostClient $clientService */
+        $clientService = app(GhostClientService::class);
+        try {
+            $this->logger($message);
+            $fromUser = TelegramUserConverter::convert($this->getFullInfo($message['message']['from_id']));
+            $message = TelegramFromUserMessageConverter::convert($message['message']);
+            $clientService->createPostFromTelegramUserMessage($fromUser, $message);
+        } catch (FailedToConvertException $e) {
+            $this->logger($e->getMessage());
         }
+
     }
 
     public function onUpdateNewChannelMessage(array $update): void
     {
-        $this->logger($update);
+        /** @var GhostClient $clientService */
+        $clientService = app(GhostClientService::class);
+        try {
+            $rawChannel = $this->getFullInfo($update['message']['peer_id']);
+            $this->logger($rawChannel);
+            $channel = TelegramMessageConverter::convert($rawChannel);
+            $message = TelegramFromUserMessageConverter::convert($update['message']);
+            $clientService->createPostFromTelegramChannelMessage($channel, $message);
+        } catch (FailedToConvertException $e) {
+            $this->logger($e->getMessage());
+        }
     }
 }

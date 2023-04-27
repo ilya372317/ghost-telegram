@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4631b8ad05eb38581e755312c0fff86f",
+    "content-hash": "1743f9f93593bd6a3e33ad986a2fca7f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1826,6 +1826,57 @@
                 }
             ],
             "time": "2023-01-09T22:29:20+00:00"
+        },
+        {
+            "name": "becklyn/mobiledoc",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Becklyn/mobiledoc-php.git",
+                "reference": "60e05da58b3f4828369f3a243f8e222b3a778927"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Becklyn/mobiledoc-php/zipball/60e05da58b3f4828369f3a243f8e222b3a778927",
+                "reference": "60e05da58b3f4828369f3a243f8e222b3a778927",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "dms/phpunit-arraysubset-asserts": "^0.3.1",
+                "ext-json": "*",
+                "masterminds/html5": "^2.7.5",
+                "symfony/phpunit-bridge": "^6.0.0"
+            },
+            "suggest": {
+                "masterminds/html5": "To automatically preprocess the given HTML to increase compatibility with the native DOM tools when importing HTML."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Becklyn\\Mobiledoc\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Becklyn Studios",
+                    "homepage": "https://becklyn.com/"
+                }
+            ],
+            "description": "A PHP-based renderer for the mobiledoc format.",
+            "homepage": "https://github.com/Becklyn/mobiledoc-php",
+            "support": {
+                "issues": "https://github.com/Becklyn/mobiledoc-php/issues",
+                "source": "https://github.com/Becklyn/mobiledoc-php/tree/2.0.2"
+            },
+            "time": "2022-01-11T08:33:00+00:00"
         },
         {
             "name": "brick/math",
