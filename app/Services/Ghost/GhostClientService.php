@@ -6,6 +6,7 @@ use App\DTO\Ghost\Post\GhostPost;
 use App\DTO\Telegram\TelegramChannel\TelegramChannel;
 use App\DTO\Telegram\TelegramMessage\TelegramMessage;
 use App\DTO\Telegram\TelegramUser\TelegramUser;
+use App\Exception\FailedToConvertException;
 use App\Models\Channel;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -23,10 +24,15 @@ class GhostClientService implements GhostClient
 
     private const POST_TITLE_LENGTH = 40;
 
+    /**
+     * @param GhostPost $postContent
+     * @return void
+     * @throws FailedToConvertException
+     */
     public function createNewPost(GhostPost $postContent): void
     {
         /** @var Response $response */
-        Http::ghost()->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
+        $response = Http::ghost()->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
             'posts' => [
                 [
                     'title' => mb_convert_encoding($postContent->title, 'UTF-8', 'UTF-8'),
@@ -36,11 +42,15 @@ class GhostClientService implements GhostClient
                             'email' => 'otinoff@gmail.com',
                         ]
                     ],
-                    'html' =>'<p>' .  str_replace("\n", '<br>',$postContent->content) . '</p>',
+                    'html' => '<p>' . str_replace("\n", '<br>', $postContent->content) . '</p>',
                     'tags' => [config('ghost.tag_id')]
                 ]
             ]
         ]);
+
+        if ($response->failed()) {
+            throw new FailedToConvertException("Failed to send post " . $response);
+        }
     }
 
     public function createPostFromTelegramUserMessage(
@@ -70,11 +80,11 @@ class GhostClientService implements GhostClient
     private function makeGhostPostFromChannelMessage(TelegramChannel $channel, TelegramMessage $message): ?GhostPost
     {
         $content = $this->addAuthorLinkToContent($message->text, $channel);
-        if (! $this->contentIsValid($content)) {
+        if (!$this->contentIsValid($content)) {
             return null;
         }
 
-        if (! $this->channelIsValid($channel)) {
+        if (!$this->channelIsValid($channel)) {
             return null;
         }
 

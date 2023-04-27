@@ -95,7 +95,6 @@ class TelegramEventHandler extends EventHandler
         $clientService = app(GhostClientService::class);
         try {
             $rawChannel = $this->getFullInfo($update['message']['peer_id']);
-            $this->logger($rawChannel);
             $channel = TelegramMessageConverter::convert($rawChannel);
             $message = TelegramFromUserMessageConverter::convert($update['message']);
             $clientService->createPostFromTelegramChannelMessage($channel, $message);
