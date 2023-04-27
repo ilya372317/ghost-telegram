@@ -17,7 +17,7 @@ class TelegramEventHandler extends EventHandler
     /**
      * @var int|string Username or ID of bot admin
      */
-    const ADMIN = "theperipherals"; // !!! Change this to your username !!!
+    const ADMIN = "ilyaotinov"; // !!! Change this to your username !!!
 
     /**
      * List of properties automatically stored in database (MySQL, Postgres, redis or memory).
@@ -61,7 +61,7 @@ class TelegramEventHandler extends EventHandler
      */
     public function onStart(): void
     {
-        $adminId = $this->getFullInfo('theperipherals')['User']['id'];
+        $adminId = $this->getFullInfo('ilyaotinov')['User']['id'];
         $this->adminId = $adminId;
     }
 
