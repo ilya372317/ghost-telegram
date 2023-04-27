@@ -33,8 +33,8 @@ class GhostClientService implements GhostClient
     public function createNewPost(GhostPost $postContent): void
     {
         /** @var Response $response */
-        $jwtToken = JwtParser::parseToken();
-        $response = Http::ghost()->withHeaders(['Authorization' => " Ghost $jwtToken"])
+
+        $response = Http::ghost()
             ->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
             'posts' => [
                 [
