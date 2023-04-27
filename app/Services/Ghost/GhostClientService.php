@@ -8,6 +8,7 @@ use App\DTO\Telegram\TelegramMessage\TelegramMessage;
 use App\DTO\Telegram\TelegramUser\TelegramUser;
 use App\Exception\FailedToConvertException;
 use App\Models\Channel;
+use App\Utils\JWT\JwtParser;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -32,7 +33,9 @@ class GhostClientService implements GhostClient
     public function createNewPost(GhostPost $postContent): void
     {
         /** @var Response $response */
-        $response = Http::ghost()->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
+        $jwtToken = JwtParser::parseToken();
+        $response = Http::ghost()->withHeaders(['Authorization' => " Ghost $jwtToken"])
+            ->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
             'posts' => [
                 [
                     'title' => mb_convert_encoding($postContent->title, 'UTF-8', 'UTF-8'),
