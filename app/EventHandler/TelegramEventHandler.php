@@ -4,7 +4,6 @@ namespace App\EventHandler;
 
 use App\DTO\Telegram\TelegramChannel\TelegramMessageConverter;
 use App\DTO\Telegram\TelegramMessage\TelegramFromUserMessageConverter;
-use App\DTO\Telegram\TelegramUser\TelegramUser;
 use App\DTO\Telegram\TelegramUser\TelegramUserConverter;
 use App\Exception\FailedToConvertException;
 use App\Services\Ghost\GhostClient;
@@ -71,9 +70,6 @@ class TelegramEventHandler extends EventHandler
      */
     public function onAny(array $update): void
     {
-//        if ($update['_'] == 'updateNewChannelMessage') {
-//            $this->updateNewMessage($update);
-//        }
     }
 
     private function updateNewMessage(array $message): void

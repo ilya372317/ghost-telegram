@@ -2,7 +2,6 @@
 
 namespace App\DTO\Telegram\TelegramMessage;
 
-use App\DTO\Convertable;
 use App\DTO\JsonConverter;
 use App\Exception\FailedToConvertException;
 
@@ -27,7 +26,7 @@ class TelegramFromUserMessageConverter implements JsonConverter
      */
     private static function validateData(array $data): void
     {
-        if (! isset($data['message'])) {
+        if (!isset($data['message'])) {
             throw new FailedToConvertException("failed to convert message from user!");
         }
     }

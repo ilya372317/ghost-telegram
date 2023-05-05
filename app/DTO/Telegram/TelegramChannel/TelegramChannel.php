@@ -8,7 +8,7 @@ class TelegramChannel implements Convertable
 {
     public function __construct(
         public string $username,
-        public string $inviteLink
+        public string $inviteLink,
     ) {
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\DTO\Telegram\TelegramChannel;
 
-use App\DTO\Convertable;
 use App\DTO\JsonConverter;
 use App\Exception\FailedToConvertException;
 
@@ -19,7 +18,7 @@ class TelegramMessageConverter implements JsonConverter
         self::validateData($data);
         return new TelegramChannel(
             username: $data['Chat']['username'],
-            inviteLink: trim('https://t.me/'. $data['Chat']['username'])
+            inviteLink: trim('https://t.me/'. $data['Chat']['username']),
         );
     }
 

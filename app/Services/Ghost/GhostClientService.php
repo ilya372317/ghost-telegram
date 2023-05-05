@@ -8,10 +8,8 @@ use App\DTO\Telegram\TelegramMessage\TelegramMessage;
 use App\DTO\Telegram\TelegramUser\TelegramUser;
 use App\Exception\FailedToConvertException;
 use App\Models\Channel;
-use App\Utils\JWT\JwtParser;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class GhostClientService
@@ -21,7 +19,7 @@ use Illuminate\Support\Facades\Log;
  */
 class GhostClientService implements GhostClient
 {
-    private const MIN_POST_LENGTH = 1000;
+    private const MIN_POST_LENGTH = 100;
 
     private const POST_TITLE_LENGTH = 40;
 
@@ -36,31 +34,40 @@ class GhostClientService implements GhostClient
 
         $response = Http::ghost()
             ->withUrlParameters(['source' => 'html'])->post('/posts?source={source}', [
-            'posts' => [
-                [
-                    'title' => mb_convert_encoding($postContent->title, 'UTF-8', 'UTF-8'),
-                    'status' => 'draft',
-                    'authors' => [
-                        [
-                            'email' => 'otinoff@gmail.com',
-                        ]
-                    ],
-                    'html' => '<p>' . str_replace("\n", '<br>', $postContent->content) . '</p>',
-                    'tags' => [config('ghost.tag_id')]
+                'posts' => [
+                    [
+                        'title' => mb_convert_encoding($postContent->title, 'UTF-8', 'UTF-8'),
+                        'status' => 'draft',
+                        'authors' => [
+                            [
+                                'email' => 'otinoff@gmail.com',
+                            ]
+                        ],
+                        'html' => mb_convert_encoding(
+                            '<p>' . str_replace("\n", '<br>', $postContent->content) . '</p>',
+                            'UTF-8',
+                            'UTF-8'
+                        ),
+                        'tags' => [config('ghost.tag_id')]
+                    ]
                 ]
-            ]
-        ]);
+            ]);
 
         if ($response->failed()) {
             throw new FailedToConvertException("Failed to send post " . $response);
         }
     }
 
+    /**
+     * @param TelegramUser $telegramUser
+     * @param TelegramMessage $telegramMessage
+     * @return void
+     * @throws FailedToConvertException
+     */
     public function createPostFromTelegramUserMessage(
         TelegramUser    $telegramUser,
         TelegramMessage $telegramMessage
-    ): void
-    {
+    ): void {
         $content = $telegramMessage->text;
         $title = substr($content, 0, 30) . '...';
 
@@ -69,6 +76,12 @@ class GhostClientService implements GhostClient
         $this->createNewPost($postContent);
     }
 
+    /**
+     * @param TelegramChannel $channel
+     * @param TelegramMessage $message
+     * @return void
+     * @throws FailedToConvertException
+     */
     public function createPostFromTelegramChannelMessage(TelegramChannel $channel, TelegramMessage $message): void
     {
         $ghostPost = $this->makeGhostPostFromChannelMessage($channel, $message);
