@@ -29,7 +29,7 @@ class UpdateChannelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'userName' => 'required|string',
+            'userName' => 'required|string|unique:channels,username',
         ];
     }
 }
