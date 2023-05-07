@@ -15,8 +15,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class DefaultChannelService implements ChannelService
 {
+    /**
+     * @param ChannelRepository $channelRepository
+     */
     public function __construct(
-        private ChannelRepository $channelRepository
+        private readonly ChannelRepository $channelRepository
     )
     {
     }

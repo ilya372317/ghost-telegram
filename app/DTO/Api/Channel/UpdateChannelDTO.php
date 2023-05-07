@@ -3,6 +3,7 @@
 namespace App\DTO\Api\Channel;
 
 use App\DTO\DataTransferObject;
+use App\Reflection\Channel\Request\GetFromBody;
 
 /**
  * Class UpdateChannelDTO
@@ -10,6 +11,7 @@ use App\DTO\DataTransferObject;
  *
  * @author Otinov Ilya
  */
+#[GetFromBody]
 class UpdateChannelDTO extends DataTransferObject
 {
     public function __construct(public readonly string $username)

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Channel;
 
 use App\Http\Controllers\Controller;
+use App\Services\Channel\ChannelService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class ChannelController
@@ -13,12 +15,18 @@ use Illuminate\Http\Request;
  */
 class ChannelController extends Controller
 {
+    public function __construct(
+        private readonly ChannelService $channelService
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): LengthAwarePaginator
     {
-        //
+        return $this->channelService->getChannelPaginator();
     }
 
     /**
@@ -26,15 +34,7 @@ class ChannelController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
