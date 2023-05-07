@@ -4,6 +4,7 @@ namespace Tests\Unit\DTO;
 
 use App\DTO\Api\Channel\UpdateChannelDTO;
 use App\Exception\DTO\InvalidRequestParameterPassedException;
+use App\Exception\DTO\InvalidRequestParamNameException;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,7 @@ class DataTransferObjectTest extends TestCase
      */
     public function testCreateFromRequest_CreatingFromValidRequest_HasValidDTOObject(): void
     {
-        $request = Request::create(uri: 'test', content: json_encode(['username' => 'test']));
+        $request = Request::create(uri: 'test', content: json_encode(['userName' => 'test']));
         $dto = UpdateChannelDTO::createFromRequest($request);
         $this->assertObjectHasProperty('username', $dto);
         $this->assertEquals('test', $dto->username);
@@ -45,11 +46,14 @@ class DataTransferObjectTest extends TestCase
      */
     public function testCreateFromRequest_CreatingFromNotValidRequest_ThrowError(): void
     {
-        $request = Request::create(uri: 'test', content: json_encode(['userName' => 'test']));
+        $request = Request::create(uri: 'test', content: json_encode(['usernamee' => 'test']));
         try {
             UpdateChannelDTO::createFromRequest($request);
+            $this->fail();
         } catch (InvalidRequestParameterPassedException $exception) {
             $this->assertInstanceOf(InvalidRequestParameterPassedException::class, $exception);
+        } catch (InvalidRequestParamNameException $exception) {
+            $this->assertInstanceOf(InvalidRequestParamNameException::class, $exception);
         }
     }
 

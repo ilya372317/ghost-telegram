@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\DTO;
 
+use App\DTO\DataTransferObject;
 use App\Exception\DTO\InvalidRequestParameterPassedException;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Class DTOAttributesTest

@@ -2,9 +2,17 @@
 
 namespace App\Http\Controllers\Channel;
 
+use App\DTO\Api\Channel\CreateChannelDTO;
+use App\DTO\Api\Channel\UpdateChannelDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Channel\CreateChannelRequest;
+use App\Http\Requests\Channel\UpdateChannelRequest;
+use App\Models\Channel;
 use App\Services\Channel\ChannelService;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -32,24 +40,27 @@ class ChannelController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateChannelRequest $request): Channel
     {
-
+        $createChannelDTO = CreateChannelDTO::createFromRequest($request);
+        return $this->channelService->createChannel($createChannelDTO);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateChannelRequest $request, string $id): Channel
     {
-        //
+        $updateChannelDTO = UpdateChannelDTO::createFromRequest($request);
+        return $this->channelService->updateChannel($id, $updateChannelDTO);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): Application|Response|FoundationApplication|ResponseFactory
     {
-        //
+        $this->channelService->deleteChannels([$id]);
+        return response(status: 204);
     }
 }

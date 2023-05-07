@@ -6,12 +6,12 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class CreateRequest
+ * Class CreateChannelRequest
  * @pakege App\Http\Requests\Channel
  *
  * @author Otinov Ilya
  */
-class CreateRequest extends FormRequest
+class CreateChannelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string',
+            'userName' => 'required|string',
         ];
     }
 }

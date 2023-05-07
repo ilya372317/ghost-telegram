@@ -25,5 +25,7 @@ use Illuminate\Support\Carbon;
  */
 class Channel extends GhostModel
 {
-
+    protected $fillable = [
+        'username',
+    ];
 }
