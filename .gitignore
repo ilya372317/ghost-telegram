@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 /telegram.session
 MadelineProto.log
+.phpstorm.meta.php
+_ide_helper.php
