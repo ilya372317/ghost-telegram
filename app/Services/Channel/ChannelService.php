@@ -2,6 +2,7 @@
 
 namespace App\Services\Channel;
 
+use App\DTO\Api\Channel\CreateChannelDTO;
 use App\DTO\Api\Channel\UpdateChannelDTO;
 use App\Models\Channel;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -31,4 +32,6 @@ interface ChannelService
      * @return void
      */
     public function deleteChannels(array $channelsIds): void;
+
+    public function createChannel(CreateChannelDTO $channelDTO): Channel;
 }

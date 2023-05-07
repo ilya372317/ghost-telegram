@@ -2,6 +2,7 @@
 
 namespace App\Services\Channel;
 
+use App\DTO\Api\Channel\CreateChannelDTO;
 use App\DTO\Api\Channel\UpdateChannelDTO;
 use App\Models\Channel;
 use App\Repository\Channel\ChannelRepository;
@@ -15,8 +16,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class DefaultChannelService implements ChannelService
 {
+    /**
+     * @param ChannelRepository $channelRepository
+     */
     public function __construct(
-        private ChannelRepository $channelRepository
+        private readonly ChannelRepository $channelRepository
     )
     {
     }
@@ -53,5 +57,16 @@ class DefaultChannelService implements ChannelService
     public function deleteChannels(array $channelsIds): void
     {
         Channel::destroy($channelsIds);
+    }
+
+    /**
+     * @param CreateChannelDTO $channelDTO
+     * @return Channel
+     */
+    public function createChannel(CreateChannelDTO $channelDTO): Channel
+    {
+        $newChannel = new Channel($channelDTO->toArray());
+        $newChannel->save();
+        return $newChannel;
     }
 }
