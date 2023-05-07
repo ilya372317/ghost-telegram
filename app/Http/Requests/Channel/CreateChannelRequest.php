@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Channel;
 
+use App\Rules\NonSpace;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,7 +30,12 @@ class CreateChannelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'userName' => 'required|string|unique:channels,username',
+            'userName' => [
+                'required',
+                'string',
+                'unique:channels',
+                new NonSpace(),
+            ],
         ];
     }
 }
