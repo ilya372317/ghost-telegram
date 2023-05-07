@@ -40,6 +40,9 @@ class DataTransferObjectTest extends TestCase
         $this->assertEquals('test', $dto->username);
     }
 
+    /**
+     * @return void
+     */
     public function testCreateFromRequest_CreatingFromNotValidRequest_ThrowError(): void
     {
         $request = Request::create(uri: 'test', content: json_encode(['userName' => 'test']));
