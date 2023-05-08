@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Http;
  */
 class GhostClientService implements GhostClient
 {
-    private const MIN_POST_LENGTH = 100;
+    private const MIN_POST_LENGTH = 1000;
 
     private const POST_TITLE_LENGTH = 40;
 
