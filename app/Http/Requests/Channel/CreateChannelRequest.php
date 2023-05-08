@@ -33,7 +33,7 @@ class CreateChannelRequest extends FormRequest
             'userName' => [
                 'required',
                 'string',
-                'unique:channels',
+                'unique:channels,username',
                 new NonSpace(),
             ],
         ];
